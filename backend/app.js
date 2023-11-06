@@ -6,7 +6,7 @@ var logger = require('morgan');
 
 // vključimo mongoose in ga povežemo z MongoDB
 var mongoose = require('mongoose');
-var mongoDB = "mongodb://127.0.0.1/DSMJ_db";
+var mongoDB = "mongodb+srv://baso:MAbbKKLHGELvbFMq@cluster0.y7aqn.mongodb.net/MPMD?retryWrites=true&w=majority";
 mongoose.connect(mongoDB);
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
