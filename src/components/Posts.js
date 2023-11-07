@@ -30,12 +30,10 @@ function Posts(){
     }, []);
 
     const loadMorePosts = () => {
-        /*let option = filterOption;
-        console.log("modif9ied", option)
-
+        let option = filterOption;
+        console.log("option")
         if (filterOption === 'sort_by_distance') {
             offset += 1;
-            console.log("here1")
             const getPosts = async function(){
                 const res = await fetch(`http://localhost:3001/posts/listByLocation/${position.latitude}/${position.longitude}/${offset}`);
                 const data = await res.json();
@@ -44,7 +42,7 @@ function Posts(){
             }
             getPosts();
         }
-        else if (filterOption === 'sort_by_date') {*/
+        else if (filterOption === 'sort_by_date') {/**/
             offset += 1;
             const getPosts = async function(){
                 const res = await fetch(`http://localhost:3001/posts/1/${offset}`);
@@ -52,7 +50,7 @@ function Posts(){
                 setPosts((oldPosts) => [...oldPosts, ...data]);
             }
             getPosts();
-        //}
+        }
     }
 
     const handleScroll = (e) => {
@@ -64,8 +62,13 @@ function Posts(){
     }
 
     useEffect(() => {
-        window.addEventListener('scroll', handleScroll)
-    }, [])
+        window.addEventListener('scroll', handleScroll);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [filterOption]);
 
 
 
@@ -87,7 +90,7 @@ function Posts(){
     const handleRadiusChange = (event) => {
         setRadius(event.target.value);
         const getPosts = async function(){
-            const res = await fetch(`http://localhost:3001/posts/within/${radius}/${position.latitude}/${position.longitude}`);
+            const res = await fetch(`http://localhost:3001/posts/within/${event.target.value}/${position.latitude}/${position.longitude}`);
             const data = await res.json();
             setPosts(data)
             console.log(data)
@@ -97,7 +100,6 @@ function Posts(){
     const handleFilterChange = (event) => {
         console.log(event.target.value)
         const selectedOption = event.target.value;
-        console.log(selectedOption)
         setFilterOption(selectedOption);
 
 
@@ -107,7 +109,6 @@ function Posts(){
                 const data = await res.json();
                 setPosts(data)
                 console.log(data)
-                window.removeEventListener('scroll', handleScroll)
             }
             getPosts();
         }
@@ -116,27 +117,26 @@ function Posts(){
                 const res = await fetch(`http://localhost:3001/posts/within/${radius}/${position.latitude}/${position.longitude}`);
                 const data = await res.json();
                 setPosts(data)
-                window.removeEventListener('scroll', handleScroll)
-                console.log(data)
-            }
-            getPosts();
-        }
-        else if (selectedOption === 'sort_by_date') {
-            const getPosts = async function(){
-                const res = await fetch(`http://localhost:3001/posts/listByLocation/${position.latitude}/${position.longitude}/${offset}`);
-                const data = await res.json();
-                setPosts(data)
-                window.addEventListener('scroll', handleScroll)
                 console.log(data)
             }
             getPosts();
         }
         else if (selectedOption === 'sort_by_distance') {
             const getPosts = async function(){
-                const res = await fetch(`http://localhost:3001/posts/1/${offset}`);
+                const res = await fetch(`http://localhost:3001/posts/listByLocation/${position.latitude}/${position.longitude}/${0}`);
+                offset = 0;
                 const data = await res.json();
                 setPosts(data)
-                window.removeEventListener('scroll', handleScroll)
+                console.log(data)
+            }
+            getPosts();
+        }
+        else if (selectedOption === 'sort_by_date') {
+            const getPosts = async function(){
+                const res = await fetch(`http://localhost:3001/posts/1/${0}`);
+                const data = await res.json();
+                offset = 0;
+                setPosts(data)
 
             }
             getPosts();
@@ -173,10 +173,14 @@ function Posts(){
                 </div>
             </div>
             <br/>
+            {posts.length > 0 ? (
+                <ul>
+                    {posts?.map(post=>(<Post post={post} key={post._id}></Post>))}
+                </ul>
+            ) : (
+                <p>No posts available.</p>
+            )}
 
-            <ul>
-                {posts?.map(post=>(<Post post={post} key={post._id}></Post>))}
-            </ul>
         </div>
     );
 }

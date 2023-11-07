@@ -32,12 +32,45 @@ module.exports = {
     },
 
     oneNear: function (req, res) {
-        var p1 = req.params.p1;
-        var p2 = req.params.p2;
+        var latitude = req.params.p1;
+        var longitude = req.params.p2;
         console.log(req.params)
-
-
-        PostModel.findOne({location: {$near: { $geometry: {type: "Point", coordinates: [p1, p2]}}}})
+        PostModel.find({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [longitude,latitude],
+                    },
+                },
+            },
+            inappropriate: false, // Add any additional filters you need
+        })
+            .sort({ distance: 1 })
+            .limit(1)
+            .populate('postedBy')
+            .exec(function (err, posts) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting post.',
+                        error: err
+                    });
+                }
+                var data = [];
+                data.posts = posts;
+                console.log(posts)
+                return res.json(posts);
+            });
+        /*PostModel.findOne({
+            location: {
+                $nearSphere: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [p1,longitude]
+                    }
+                }
+            }
+        })//{location: {$near: { $geometry: {type: "Point", coordinates: [p1,longitude]}}}})
             .sort({date: 'desc'})
             .populate('postedBy')
             .exec(function (err, post) {
@@ -50,18 +83,49 @@ module.exports = {
                 var data = [];
                 data.posts = [post];
                 return res.json(data.posts);
-            });
+            });*/
     },
     withinRadius: function (req, res) {
         var dist = req.params.dist;
-        var p1 = req.params.p1;
-        var p2 = req.params.p2;
-
+        var latitude = req.params.p1;
+        var longitude = req.params.p2;
 
         console.log(req.params)
 
-        PostModel.find({location: {$geoWithin: { $centerSphere: [ [ p1, p2 ], dist*0.621371/3963.2] }}})
-            .sort({date: 'desc'})
+        /*const currentLocation = {
+            type: 'Point',
+            coordinates: [parseFloat(longitude), parseFloat(latitude)],
+        };
+            PostModel.aggregate([
+                {
+                    $geoNear: {
+                        near: currentLocation,
+                        distanceField: 'distance',
+                        maxDistance: parseInt(dist) * 1000,
+                        spherical: true,
+                    },
+                },
+            ]).exec()
+            .then((result) => {
+                console.log('Aggregation Result:');
+                console.log(result);
+            })
+            .catch((error) => {
+                console.error('Aggregation Error:', error);
+            });*/
+
+        PostModel.find({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: "Point",
+                        coordinates: [longitude,latitude]
+                    },
+                    $maxDistance: dist * 1000
+                }
+            }
+        })//{$geoWithin: { $centerSphere: [ [latitude,longitude ], dist*0.621371/3963.2] }}})
+            .sort({ distance: 1 })
             .populate('postedBy')
             .exec(function (err, posts) {
                 if (err) {
@@ -77,8 +141,8 @@ module.exports = {
     },
      listByLocation: function (req, res) {
         console.log(req.params)
-         var p1 = req.params.p1;
-         var p2 = req.params.p2;
+         var latitude = req.params.p1;
+         var longitude = req.params.p2;
          const  limitValue = 1;
          const  offset = req.params.offset;
 
@@ -94,15 +158,15 @@ module.exports = {
                  $near: {
                      $geometry: {
                          type: "Point",
-                         coordinates: [p1, p2],
+                         coordinates: [longitude,latitude],
                      },
                  },
              },
              inappropriate: false, // Add any additional filters you need
          })
              .sort({ distance: 1 })
-             //.skip(offsetValue)
-             //.limit(limitValue)
+             .skip(offsetValue)
+             .limit(limitValue)
              .populate('postedBy')
              .exec(function (err, posts) {
                  if (err) {
@@ -208,7 +272,7 @@ module.exports = {
             tags: req.body.tags,
             location: {
                 type: 'Point',
-                coordinates: [req.body.latitude, req.body.longitude] // Replace with actual coordinates
+                coordinates: [req.body.longitude, req.body.latitude] // Replace with actual coordinates
             }
         });
 

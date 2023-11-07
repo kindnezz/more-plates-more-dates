@@ -26,7 +26,7 @@ function HeaderTop(props) {
         <AppBar position="fixed">
             <Toolbar style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <Typography variant="h3" component="div" style={{ fontWeight: 'bold', color: 'white' }}>
+                    <Typography variant="h4" component="div" style={{ fontWeight: 'bold', color: 'white' }}>
                         {props.title}
                     </Typography>
                 </div>

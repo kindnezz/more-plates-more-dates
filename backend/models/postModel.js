@@ -17,12 +17,12 @@ var postSchema = new Schema({
     'date': Date,
     'location': {
         type: {
-            type: String,  // We'll use 'Point' for the type
-            enum: ['Point'], // Ensures the type is always 'Point'
+            type: String,
+            enum: ['Point'],
             required: true
         },
         coordinates: {
-            type: [Number],  // An array of two numbers (longitude and latitude)
+            type: [Number], // [<longitude>, <latitude>]
             required: true
         }
     }
