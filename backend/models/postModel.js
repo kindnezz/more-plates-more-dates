@@ -14,9 +14,20 @@ var postSchema = new Schema({
     'rating': Number,
     'reports': Number,
     'inappropriate' : Boolean,
-    'date': Date
+    'date': Date,
+    'location': {
+        type: {
+            type: String,  // We'll use 'Point' for the type
+            enum: ['Point'], // Ensures the type is always 'Point'
+            required: true
+        },
+        coordinates: {
+            type: [Number],  // An array of two numbers (longitude and latitude)
+            required: true
+        }
+    }
 });
-
+postSchema.index({ location: '2dsphere' });
 postSchema.pre('save', function (next) {
     var photo = this;
     var tags = photo.tags[0].split(' ')

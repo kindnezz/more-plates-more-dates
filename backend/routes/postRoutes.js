@@ -18,6 +18,10 @@ function requiresLogin(req, res, next){
 
 router.get('/', postController.list);
 
+router.get('/within/:dist/:p1/:p2', postController.withinRadius);
+router.get('/oneNear/:p1/:p2', postController.oneNear);
+router.get('/listByLocation/:p1/:p2', postController.listByLocation);
+
 router.get('/user/:userId', postController.listByUser);
 router.get('/:limit/:offset', postController.listForInfiniteScroll);
 

@@ -1,3 +1,5 @@
+
+
 var PostModel = require('../models/postModel.js');
 const UserModel = require("../models/userModel");
 const decay = require("decay");
@@ -12,6 +14,7 @@ const {query} = require("express");
 module.exports = {
 
     list: function (req, res) {
+
         PostModel.find({'inappropriate': "false"})
             .sort({date: 'desc'})
             .populate('postedBy')
@@ -27,6 +30,78 @@ module.exports = {
                 return res.json(posts);
             });
     },
+
+    oneNear: function (req, res) {
+        var p1 = req.params.p1;
+        var p2 = req.params.p2;
+        console.log(req.params)
+
+
+        PostModel.findOne({location: {$near: { $geometry: {type: "Point", coordinates: [p1, p2]}}}})
+            .sort({date: 'desc'})
+            .populate('postedBy')
+            .exec(function (err, posts) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting post.',
+                        error: err
+                    });
+                }
+                var data = [];
+                data.posts = posts;
+                return res.json(posts);
+            });
+    },
+    withinRadius: function (req, res) {
+        var dist = req.params.dist;
+        var p1 = req.params.p1;
+        var p2 = req.params.p2;
+        console.log(req.params)
+
+        PostModel.find({location: {$geoWithin: { $centerSphere: [ [ p1, p2 ], dist*0.621371/3963.2] }}})
+            .sort({date: 'desc'})
+            .populate('postedBy')
+            .exec(function (err, posts) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting post.',
+                        error: err
+                    });
+                }
+                var data = [];
+                data.posts = posts;
+                return res.json(posts);
+            });
+    },
+     listByLocation: function (req, res) {
+        console.log(req.params)
+         var p1 = req.params.p1;
+         var p2 = req.params.p2;
+         PostModel.find({
+             location: {
+                 $near: {
+                     $geometry: {
+                         type: "Point",
+                         coordinates: [p1, p2],
+                     },
+                 },
+             },
+             inappropriate: false, // Add any additional filters you need
+         })
+             .sort({ distance: 1 })
+             .populate('postedBy')
+             .exec(function (err, posts) {
+                 if (err) {
+                     return res.status(500).json({
+                         message: 'Error when getting post.',
+                         error: err
+                     });
+                 }
+                 var data = [];
+                 data.posts = posts;
+                 return res.json(posts);
+             });
+     },
 
     listForInfiniteScroll: function (req, res) {
         const  limit = req.params.limit;
@@ -116,7 +191,11 @@ module.exports = {
             inappropriate: false,
             date: new Date(),
             description: req.body.description,
-            tags: req.body.tags
+            tags: req.body.tags,
+            location: {
+                type: 'Point',
+                coordinates: [req.body.latitude, req.body.longitude] // Replace with actual coordinates
+            }
         });
 
         UserModel.findOneAndUpdate({_id: req.session.userId}, {$inc: {'posts': 1}})

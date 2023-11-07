@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import {useContext, useEffect, useState} from 'react'
 import { Navigate } from 'react-router';
 import { UserContext } from '../userContext';
 import {Button, Container, TextareaAutosize, TextField} from "@mui/material";
@@ -13,6 +13,7 @@ function AddPost(props) {
     const[uploaded, setUploaded] = useState(false);
     const [video, setVideo] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [position, setPosition] = useState(null);
 
     const uploadFile = async (type) => {
         const data = new FormData();
@@ -29,6 +30,21 @@ function AddPost(props) {
             console.error(error);
         }
     }
+
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            // Get the current geolocation
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setPosition(position.coords);
+                    console.log(position.coords)
+                },
+                (error) => {
+                }
+            );
+        } else {
+        }
+    }, []);
 
     async function onSubmit(e){
         e.preventDefault();
@@ -48,11 +64,14 @@ function AddPost(props) {
             const videoUrl = await uploadFile('video');
             console.log(videoUrl)
 
+
             const formData = new FormData();
             formData.append('name', name);
             formData.append('link', videoUrl);
             formData.append('description', description);
             formData.append('tags', tags);
+            formData.append('latitude', position.latitude);
+            formData.append('longitude', position.longitude);
 
             await fetch('http://localhost:3001/posts', {
                 method: 'POST',
