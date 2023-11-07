@@ -40,7 +40,7 @@ module.exports = {
         PostModel.findOne({location: {$near: { $geometry: {type: "Point", coordinates: [p1, p2]}}}})
             .sort({date: 'desc'})
             .populate('postedBy')
-            .exec(function (err, posts) {
+            .exec(function (err, post) {
                 if (err) {
                     return res.status(500).json({
                         message: 'Error when getting post.',
@@ -48,14 +48,16 @@ module.exports = {
                     });
                 }
                 var data = [];
-                data.posts = posts;
-                return res.json(posts);
+                data.posts = [post];
+                return res.json(data.posts);
             });
     },
     withinRadius: function (req, res) {
         var dist = req.params.dist;
         var p1 = req.params.p1;
         var p2 = req.params.p2;
+
+
         console.log(req.params)
 
         PostModel.find({location: {$geoWithin: { $centerSphere: [ [ p1, p2 ], dist*0.621371/3963.2] }}})
@@ -77,6 +79,16 @@ module.exports = {
         console.log(req.params)
          var p1 = req.params.p1;
          var p2 = req.params.p2;
+         const  limitValue = 1;
+         const  offset = req.params.offset;
+
+
+         const offsetValue = parseInt(offset, 10);
+
+         if (isNaN(limitValue) || isNaN(offsetValue)) {
+             return res.status(400).json({ message: 'Invalid limit or offset values' });
+         }
+
          PostModel.find({
              location: {
                  $near: {
@@ -89,6 +101,8 @@ module.exports = {
              inappropriate: false, // Add any additional filters you need
          })
              .sort({ distance: 1 })
+             //.skip(offsetValue)
+             //.limit(limitValue)
              .populate('postedBy')
              .exec(function (err, posts) {
                  if (err) {
