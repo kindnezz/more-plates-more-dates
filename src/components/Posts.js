@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Post from './Post';
 import FilterComponent from "./FIlterComponent";
-import {FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField} from "@mui/material";
+import {FormControl, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField} from "@mui/material";
 
 
 
@@ -11,6 +11,7 @@ function Posts(){
     const [position, setPosition] = useState(null);
     const [filterOption, setFilterOption] = useState('sort_by_date');
     const [radius, setRadius] = useState(10); // Radius for "within radius" filter
+
 
 
 
@@ -146,36 +147,36 @@ function Posts(){
     return(
         <div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <FormControl>
-
-                        <Select
-                            value={filterOption}
-                            onChange={handleFilterChange}
-                        >
-                            <MenuItem value="sort_by_distance">Sort by Distance</MenuItem>
-                            <MenuItem value="sort_by_date">Sort by Date</MenuItem>
-
-                            <MenuItem value="nearest">Nearest</MenuItem>
-                            <MenuItem value="within_radius">Within Radius</MenuItem>
-
-
-                        </Select>
-                    </FormControl>
+                <Grid container justifyContent="flex-start" alignItems="center" spacing={2}>
+                    <Grid item>
+                        <FormControl>
+                            <Select
+                                value={filterOption}
+                                onChange={handleFilterChange}
+                            >
+                                <MenuItem value="sort_by_distance">Sort by Distance</MenuItem>
+                                <MenuItem value="sort_by_date">Sort by Date</MenuItem>
+                                <MenuItem value="nearest">Nearest</MenuItem>
+                                <MenuItem value="within_radius">Within Radius</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
                     {filterOption === 'within_radius' && (
-                        <TextField
-                            type="number"
-                            label="Radius (km)"
-                            value={radius}
-                            onChange={handleRadiusChange}
-                        />
+                        <Grid item>
+                            <TextField
+                                type="number"
+                                label="Radius (km)"
+                                value={radius}
+                                onChange={handleRadiusChange}
+                            />
+                        </Grid>
                     )}
-                </div>
+                </Grid>
             </div>
             <br/>
             {posts.length > 0 ? (
                 <ul>
-                    {posts?.map(post=>(<Post post={post} key={post._id}></Post>))}
+                    {posts?.map(post=>(<Post post={post} location={position} key={post._id}></Post>))}
                 </ul>
             ) : (
                 <p>No posts available.</p>

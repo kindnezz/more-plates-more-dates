@@ -1,7 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../userContext';
 import { Navigate } from 'react-router-dom';
-import {Container, Typography} from "@mui/material";
+import {Container, Typography, Card} from "@mui/material";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser  } from '@fortawesome/free-solid-svg-icons'
 
 function Profile(){
     const userContext = useContext(UserContext);
@@ -19,6 +21,7 @@ function Profile(){
     return (
         <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '20px' }}>
             {!userContext.user ? <Navigate replace to="/login" /> : ''}
+            <FontAwesomeIcon  size="3x" style={{ marginBottom: '10px' }} icon={faUser} className="icon" />
             <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                 User Profile
             </Typography>
