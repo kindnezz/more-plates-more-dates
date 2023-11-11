@@ -79,22 +79,22 @@ function Post(props){
 
                         <FacebookShareButton
                             url={'http://localhost:3000/view/' + props.post._id}
-                            quote={'Dummy text!'}
-                            hashtag="#muo">
+                            title={'Check this lift out!'}
+                            hashtag="#MPMD">
                             <FacebookIcon size={32} round />
                         </FacebookShareButton>
 
                         <TwitterShareButton
                             url={'http://localhost:3000/view/' + props.post._id}
-                            quote={'Dummy text!'}
-                            hashtag="#muo">
+                            title={'Check this lift out!'}
+                            hashtag="#MPMD">
                             <TwitterIcon size={32} round />
                         </TwitterShareButton>
 
                         <RedditShareButton
                             url={'http://localhost:3000/view/' + props.post._id}
-                            quote={'Dummy text!'}
-                            hashtag="#muo">
+                            title={'Check this lift out!'}
+                            hashtag="#MPMD">
                             <RedditIcon size={32} round />
                         </RedditShareButton>
                     </CardContent>

@@ -4,7 +4,21 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-// vključimo mongoose in ga povežemo z MongoDB
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: "MPMD API",
+            description: "MPMD API Information",
+            version: "1.0.0",
+        }
+    },
+
+    apis: ["app.js", "routes/userRoutes.js", "routes/postRoutes.js", "routes/index.js", "routes/commentRoutes.js"]
+};
+
 var mongoose = require('mongoose');
 var mongoDB = "mongodb+srv://baso:MAbbKKLHGELvbFMq@cluster0.y7aqn.mongodb.net/MPMD?retryWrites=true&w=majority";
 mongoose.connect(mongoDB);
@@ -12,9 +26,6 @@ mongoose.Promise = global.Promise;
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-console.log(mongoose.version)
-
-// vključimo routerje
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 var postsRouter = require('./routes/postRoutes');
@@ -27,7 +38,6 @@ var allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
 app.use(cors({
     credentials: true,
     origin: function(origin, callback){
-        // Allow requests with no origin (mobile apps, curl)
         if(!origin) return callback(null, true);
         if(allowedOrigins.indexOf(origin)===-1){
             var msg = "The CORS policy does not allow access from the specified Origin.";
@@ -37,7 +47,6 @@ app.use(cors({
     }
 }));
 
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
@@ -47,11 +56,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-/**
- * Vključimo session in connect-mongo.
- * Connect-mongo skrbi, da se session hrani v bazi.
- * Posledično ostanemo prijavljeni, tudi ko spremenimo kodo (restartamo strežnik)
- */
 var session = require('express-session');
 var MongoStore = require('connect-mongo');
 app.use(session({
@@ -60,8 +64,7 @@ app.use(session({
     saveUninitialized: false,
     store: MongoStore.create({mongoUrl: mongoDB})
 }));
-//Shranimo sejne spremenljivke v locals
-//Tako lahko do njih dostopamo v vseh view-ih (glej layout.hbs)
+
 app.use(function (req, res, next) {
     res.locals.session = req.session;
     next();
@@ -72,20 +75,19 @@ app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 app.use('/comments', commentsRouter);
 
-// catch 404 and forward to error handler
+//used for Swagger documentation
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 app.use(function(req, res, next) {
     next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-    // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
     res.status(err.status || 500);
-    //res.render('error');
     res.json(err);
 });
 

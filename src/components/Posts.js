@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Post from './Post';
-import FilterComponent from "./FIlterComponent";
 import {FormControl, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField} from "@mui/material";
 
 
