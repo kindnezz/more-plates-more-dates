@@ -1,6 +1,30 @@
 import { useState } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import {Box, Button, Container, Paper, TextField, Typography} from "@mui/material";
+import {styled} from "@mui/material/styles";
+import {grey} from "@mui/material/colors";
+
+const CustomButton = styled(Button)(({ theme }) => ({
+    color: theme.palette.getContrastText(grey[900]),
+    backgroundColor: grey[900],
+    '&:hover': {
+        backgroundColor: grey[700],
+    },
+}));
+
+const CustomTextField = styled(TextField)(({}) => ({
+    '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+            borderColor: 'black',
+        },
+    },
+    '& .MuiInputLabel-root': {
+        color: 'grey',
+    },
+    '& .MuiInputLabel-shrink': {
+        color: 'grey',
+    },
+}));
 
 function Register() {
     const [username, setUsername] = useState([]);
@@ -50,10 +74,10 @@ function Register() {
     }
 
     return(
-        <Container maxWidth="xs">
-            <Paper elevation={3} style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Container maxWidth="sm" style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Paper elevation={3} style={{ padding: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <form onSubmit={Register}>
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         variant="outlined"
                         margin="normal"
@@ -62,7 +86,7 @@ function Register() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         variant="outlined"
                         margin="normal"
@@ -71,7 +95,7 @@ function Register() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
-                    <TextField
+                    <CustomTextField
                         fullWidth
                         variant="outlined"
                         margin="normal"
@@ -87,9 +111,9 @@ function Register() {
                             onChange={reCaptchaOnChange}
                         />
                     </Box>
-                    <Button fullWidth variant="contained" color="primary" type="submit">
+                    <CustomButton fullWidth variant="contained" color="primary" type="submit">
                         Register
-                    </Button>
+                    </CustomButton>
                     <Typography color="error">{error}</Typography>
                 </form>
             </Paper>

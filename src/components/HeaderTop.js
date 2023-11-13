@@ -1,7 +1,27 @@
 import {useContext, useState} from "react";
 import { UserContext } from "../userContext";
 import {Link, useLocation} from "react-router-dom";
-import {AppBar, Button, ButtonGroup, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Toolbar, Typography} from "@mui/material";
+import {
+    AppBar,
+    Button,
+    ButtonGroup,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton,
+    Toolbar,
+    Typography
+} from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import PublishIcon from '@mui/icons-material/Publish';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 function HeaderTop(props) {
     const [open, setOpen] = useState(false);
@@ -22,8 +42,9 @@ function HeaderTop(props) {
         setOpen(false);
     };
 
+
     return (
-        <AppBar position="fixed">
+        <AppBar position="fixed" style={{ backgroundColor: 'gray' }}>
             <Toolbar style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                     <Typography variant="h4" component="div" style={{ fontWeight: 'bold', color: 'white' }}>
@@ -31,60 +52,59 @@ function HeaderTop(props) {
                     </Typography>
                 </div>
                 <ButtonGroup color="primary" aria-label="navigation">
-                    <Button
+                    <IconButton
                         component={Link}
                         to="/"
-                        style={{ color: 'white' }}
-                        disableElevation
+                        style={{ color: 'white'}}
                         variant={location.pathname === '/' ? 'contained' : 'outlined'}>
-                        Home
-                    </Button>
+                        <HomeIcon />
+                    </IconButton>
 
-                    <Button
+                    <IconButton
                         component={Link}
                         to="/leaderboard"
                         style={{ color: 'white' }}
                         disableElevation
                         variant={location.pathname === '/leaderboard' ? 'contained' : 'outlined'}>
-                        Leaderboard
-                    </Button>
+                        <LeaderboardIcon/>
+                    </IconButton>
                     <UserContext.Consumer>
                         {context => (
                             context.user ?
                                 <>
-                                    <Button
+                                    <IconButton
                                         component={Link}
                                         to="/my-posts"
                                         style={{ color: 'white' }}
                                         disableElevation
                                         variant={location.pathname === '/my-posts' ? 'contained' : 'outlined'}>
-                                        My Posts
-                                    </Button>
+                                        <ViewListIcon/>
+                                    </IconButton>
 
-                                    <Button
+                                    <IconButton
                                         component={Link}
                                         to="/publish"
                                         style={{ color: 'white' }}
                                         disableElevation
                                         variant={location.pathname === '/publish' ? 'contained' : 'outlined'}>
-                                        Publish
-                                    </Button>
+                                        <PublishIcon/>
+                                    </IconButton>
 
-                                    <Button
+                                    <IconButton
                                         component={Link}
                                         to="/profile"
                                         style={{ color: 'white' }}
                                         disableElevation
                                         variant={location.pathname === '/profile' ? 'contained' : 'outlined'}>
-                                        Profile
-                                    </Button>
+                                        <AccountCircleIcon/>
+                                    </IconButton>
 
-                                    <Button
+                                    <IconButton
                                         style={{ color: 'white' }}
                                         disableElevation
                                         onClick={handleOpen}>
-                                        Logout
-                                    </Button>
+                                        <LogoutIcon/>
+                                    </IconButton>
 
                                     <Dialog open={open} onClose={handleClose} >
                                         <DialogTitle>Logout Confirmation</DialogTitle>
@@ -94,10 +114,10 @@ function HeaderTop(props) {
                                             </DialogContentText>
                                         </DialogContent>
                                         <DialogActions>
-                                            <Button onClick={handleClose} color="primary">
+                                            <Button onClick={handleClose} style={{ color: 'gray' }}>
                                                 No
                                             </Button>
-                                            <Button onClick={handleLogout} color="primary"  to="/">
+                                            <Button onClick={handleLogout} style={{ color: 'gray' }}  to="/">
                                                 Logout
                                             </Button>
                                         </DialogActions>
@@ -106,23 +126,23 @@ function HeaderTop(props) {
                                 </>
                                 :
                                 <>
-                                    <Button
+                                    <IconButton
                                         component={Link}
                                         to="/login"
                                         style={{ color: 'white' }}
                                         disableElevation
                                         variant={location.pathname === '/login' ? 'contained' : 'outlined'}>
-                                        Login
-                                    </Button>
+                                        <LoginIcon/>
+                                    </IconButton>
 
-                                    <Button
+                                    <IconButton
                                         component={Link}
                                         to="/register"
                                         style={{ color: 'white' }}
                                         disableElevation
                                         variant={location.pathname === '/register' ? 'contained' : 'outlined'}>
-                                        Register
-                                    </Button>
+                                        <PersonAddIcon/>
+                                    </IconButton>
                                 </>
                         )}
                     </UserContext.Consumer>

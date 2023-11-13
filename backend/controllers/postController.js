@@ -1,5 +1,3 @@
-
-
 var PostModel = require('../models/postModel.js');
 const UserModel = require("../models/userModel");
 const decay = require("decay");
@@ -61,29 +59,6 @@ module.exports = {
                 console.log(posts)
                 return res.json(posts);
             });
-        /*PostModel.findOne({
-            location: {
-                $nearSphere: {
-                    $geometry: {
-                        type: 'Point',
-                        coordinates: [p1,longitude]
-                    }
-                }
-            }
-        })//{location: {$near: { $geometry: {type: "Point", coordinates: [p1,longitude]}}}})
-            .sort({date: 'desc'})
-            .populate('postedBy')
-            .exec(function (err, post) {
-                if (err) {
-                    return res.status(500).json({
-                        message: 'Error when getting post.',
-                        error: err
-                    });
-                }
-                var data = [];
-                data.posts = [post];
-                return res.json(data.posts);
-            });*/
     },
     withinRadius: function (req, res) {
         var dist = req.params.dist;
@@ -92,27 +67,6 @@ module.exports = {
 
         console.log(req.params)
 
-        /*const currentLocation = {
-            type: 'Point',
-            coordinates: [parseFloat(longitude), parseFloat(latitude)],
-        };
-            PostModel.aggregate([
-                {
-                    $geoNear: {
-                        near: currentLocation,
-                        distanceField: 'distance',
-                        maxDistance: parseInt(dist) * 1000,
-                        spherical: true,
-                    },
-                },
-            ]).exec()
-            .then((result) => {
-                console.log('Aggregation Result:');
-                console.log(result);
-            })
-            .catch((error) => {
-                console.error('Aggregation Error:', error);
-            });*/
 
         PostModel.find({
             location: {
@@ -124,7 +78,7 @@ module.exports = {
                     $maxDistance: dist * 1000
                 }
             }
-        })//{$geoWithin: { $centerSphere: [ [latitude,longitude ], dist*0.621371/3963.2] }}})
+        })
             .sort({ distance: 1 })
             .populate('postedBy')
             .exec(function (err, posts) {
@@ -377,13 +331,6 @@ module.exports = {
                 console.log(`Rating for item with ID ${id}: ${likedItem.rating}`);
                 const originalRating = 2 * post.rating - likedItem.rating;
 
-                // if (originalRating !== 0) {
-                //     post.rating = (originalRating + rating) / 2;
-                // } else {
-                //     // If rating is 0, keep the original rating
-                //     post.rating = rating;
-                // }
-
                 console.log(post.rating, rating, originalRating)
                 post.rating = (originalRating + rating) / 2;
 
@@ -406,12 +353,6 @@ module.exports = {
             } else {
                 console.log(`User with ID ${id} has not liked an item with ID ${id}.`);
 
-                // if (post.rating !== 0) {
-                //     post.rating = (post.rating + rating) / 2;
-                // } else {
-                //     // If rating is 0, keep the original rating
-                //     post.rating = rating;
-                // }
                 console.log(post.rating, rating, post.rating + rating)
                 post.rating = (post.rating + rating) / 2;
 
@@ -508,137 +449,4 @@ module.exports = {
                 });
             });
     },
-
-    // listByVotesDecaying: function (req, res) {
-    //     PostModel.find({'inappropriate': "false"})
-    //         .sort({views: 'desc'})
-    //         .populate('postedBy')
-    //         .exec(function (err, photos) {
-    //             if (err) {
-    //                 return res.status(500).json({
-    //                     message: 'Error when getting photo.',
-    //                     error: err
-    //                 });
-    //             }
-    //
-    //             var decay = require('decay');
-    //             var hHot = decay.hackerHot(1.8)
-    //
-    //             photos.forEach((photo, index) => {
-    //                 photo.score = hHot(photo.likes, photo.date);
-    //                 console.log(photo.score)
-    //             });
-    //
-    //             photos.sort((a, b) => b.score - a.score);
-    //
-    //             return res.json(photos);
-    //         });
-    // },
-
-    // like: function (req, res) {
-    //     var id = req.params.id;
-    //
-    //     PhotoModel.findOne({_id: id})
-    //         .populate('postedBy')
-    //         .exec(function (err, photo) {
-    //             if (err) {
-    //                 return res.status(500).json({
-    //                     message: 'Error when getting photo',
-    //                     error: err
-    //                 });
-    //             }
-    //
-    //             if (!photo) {
-    //                 return res.status(404).json({
-    //                     message: 'No such photo'
-    //                 });
-    //             }
-    //
-    //             UserModel.findOne({_id: req.session.userId}, function (err, user) {
-    //                 if (err) {
-    //                     return res.status(500).json({
-    //                         message: 'Error when getting user.',
-    //                         error: err
-    //                     });
-    //                 }
-    //
-    //                 if (!user) {
-    //                     return res.status(404).json({
-    //                         message: 'No such user'
-    //                     });
-    //                 }
-    //
-    //                 // var isInArray = user.liked.some(function (_id) {
-    //                 //     return _id === id;
-    //                 // });
-    //
-    //                 if (user.liked.includes(id)) {
-    //                     photo.likes -= 1;
-    //                     UserModel.findOneAndUpdate({_id: req.session.userId}, {$pull: {liked: id}})
-    //                         .exec();
-    //                     UserModel.findOneAndUpdate({_id: photo.postedBy}, {$inc: {'likes': -1}})
-    //                         .exec();
-    //
-    //                     photo.save(function (err, photo) {
-    //                         if (err) {
-    //                             return res.status(500).json({
-    //                                 message: 'Error when updating photo.',
-    //                                 error: err
-    //                             });
-    //                         }
-    //
-    //                         return res.json(photo);
-    //                     });
-    //                 } else {
-    //                     photo.likes += 1;
-    //                     UserModel.findOneAndUpdate({_id: req.session.userId}, {$addToSet: {liked: id}})
-    //                         .exec();
-    //                     UserModel.findOneAndUpdate({_id: photo.postedBy}, {$inc: {'likes': 1}})
-    //                         .exec();
-    //
-    //                     photo.save(function (err, photo) {
-    //                         if (err) {
-    //                             return res.status(500).json({
-    //                                 message: 'Error when updating photo.',
-    //                                 error: err
-    //                             });
-    //                         }
-    //
-    //                         return res.json(photo);
-    //                     });
-    //                 }
-    //             });
-    //         });
-    // },
-
-    // listByTags: function (req, res) {
-    //     var tags = req.body.tags;
-    //     var tagsSplit = tags.split(" ");
-    //     console.log(tagsSplit);
-    //
-    //     PostModel.find({'inappropriate': "false"})
-    //         .sort({date: 'desc'})
-    //         .populate('postedBy')
-    //         .exec(function (err, posts) {
-    //             if (err) {
-    //                 return res.status(500).json({
-    //                     message: 'Error when getting post.',
-    //                     error: err
-    //                 });
-    //             }
-    //             var postsByTags = [];
-    //
-    //             if (tags !== "") {
-    //                 posts.forEach((post, index) => {
-    //                     if (post.tags.some(value => tagsSplit.includes(value))) {
-    //                         postsByTags.push(post);
-    //                     }
-    //                 });
-    //             } else {
-    //                 postsByTags = posts;
-    //             }
-    //
-    //             return res.json(postsByTags);
-    //         });
-    // },
 };

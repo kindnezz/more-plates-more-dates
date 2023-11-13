@@ -4,6 +4,31 @@ import { UserContext } from '../userContext';
 import {Button, Container, TextareaAutosize, TextField} from "@mui/material";
 import axios from "axios";
 import {ThreeDots} from "react-loader-spinner";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { styled } from '@mui/material/styles';
+import { grey} from '@mui/material/colors';
+
+const CustomButton = styled(Button)(({ theme }) => ({
+    color: theme.palette.getContrastText(grey[900]),
+    backgroundColor: grey[900],
+    '&:hover': {
+        backgroundColor: grey[700],
+    },
+}));
+
+const CustomTextField = styled(TextField)(({}) => ({
+    '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+            borderColor: 'black',
+        },
+    },
+    '& .MuiInputLabel-root': {
+        color: 'grey',
+    },
+    '& .MuiInputLabel-shrink': {
+        color: 'grey',
+    },
+}));
 
 function AddPost(props) {
     const userContext = useContext(UserContext);
@@ -50,11 +75,11 @@ function AddPost(props) {
         e.preventDefault();
 
         if(!name){
-            alert("Insert picture title!");
+            alert("Insert video title!");
             return;
         }
         else if (!description){
-            alert("Insert picture description!");
+            alert("Insert video description!");
             return;
         }
 
@@ -63,7 +88,6 @@ function AddPost(props) {
 
             const videoUrl = await uploadFile('video');
             console.log(videoUrl)
-
 
             const formData = new FormData();
             formData.append('name', name);
@@ -95,7 +119,7 @@ function AddPost(props) {
             {!userContext.user ? <Navigate replace to="/login" /> : ''}
             {uploaded ? <Navigate replace to="/" /> : ''}
             <form className="form-group" onSubmit={onSubmit}>
-                <TextField
+                <CustomTextField
                     fullWidth
                     variant="outlined"
                     margin="normal"
@@ -105,26 +129,33 @@ function AddPost(props) {
                     onChange={(e) => setName(e.target.value)}
                 />
 
-                <TextareaAutosize
-                    minRows={3}  // Set the minimum number of rows
-                    maxRows={10} // Set the maximum number of rows
-                    placeholder="Post description"
+                <CustomTextField
+                    fullWidth
+                    variant="outlined"
+                    margin="normal"
+                    label="Post description"
                     name="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     style={{ width: '100%' }}
                 />
 
-                <label htmlFor="video">Video:</label>
-                <br />
-                <input
-                    type="file"
-                    accept="video/*"
-                    id="video"
-                    onChange={(e) => setVideo((prev) => e.target.files[0])}
-                />
+                <CustomButton
+                    variant="contained"
+                    startIcon={<UploadFileIcon />}
+                    style={{ marginTop: '20px', marginBottom: '20px' }}
+                    component="label">
+                    Choose Video File
+                    <input
+                        type="file"
+                        accept="video/*"
+                        id="video"
+                        style={{ display: 'none' }}
+                        onChange={(e) => setVideo((prev) => e.target.files[0])}
+                    />
+                </CustomButton>
 
-                <TextField
+                <CustomTextField
                     fullWidth
                     variant="outlined"
                     margin="normal"
@@ -147,9 +178,9 @@ function AddPost(props) {
                     />
                 }
 
-                <Button fullWidth variant="contained" color="primary" type="submit">
+                <CustomButton fullWidth variant="contained" color="primary" type="submit">
                     Publish
-                </Button>
+                </CustomButton>
             </form>
         </Container>
     )

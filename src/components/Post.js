@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import YouTube from 'react-youtube';
 import {Card, CardActionArea, CardContent, Typography} from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarker } from '@fortawesome/free-solid-svg-icons'
@@ -12,6 +11,34 @@ import {
     TwitterIcon,
     TwitterShareButton
 } from "react-share";
+
+
+const cardStyle = {
+    height: '100%',
+    alignItems: 'center',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '20px',
+    padding: '10px',
+    justifyContent: 'center'
+};
+
+const locationStyle = {
+    fontWeight: 'bold',
+    justifyContent: 'left',
+    marginTop: '10%'
+};
+
+const gridContainerStyle = {
+    display: 'grid',
+    gridTemplateColumns: '50% 50%',
+    gap: '16px',
+};
+
+const iconStyle = {
+    marginRight: '5px',
+    color: '#007bff'
+}
 
 function Post(props){
     const navigate = useNavigate()
@@ -30,73 +57,83 @@ function Post(props){
     };
     getCity();
 
-    const cardStyle = {
-        alignItems: 'center',
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '20px',
-        padding: '10px',
-        justifyContent: 'center'
-    };
-    const locationStyle = {
-        fontWeight: 'bold',
-        justifyContent: 'left',
-        margin: '0',
-    };
-
-    const iconStyle = {
-        marginRight: '5px',
-        color: '#007bff'
-    }
-
     return (
         <div style={cardStyle}>
             <Card onClick={() => navigate('/view/' + props.post._id)}>
                 <CardActionArea>
                     <CardContent>
-
-                        <Typography variant="h4" component="div">
+                        <Typography variant="h2" component="div">
                             {props.post.name}
                         </Typography>
-                        <span style={locationStyle}>
-                            <p>
-                                <FontAwesomeIcon  style={iconStyle} icon={faMapMarker} className="icon" />
-                                {city}
-                            </p>
-                        </span>
-                        <video controls>
-                            <source src={props.post.link} type="video/mp4" />
-                        </video>
-                        <Typography variant="h4" component="div">
-                            {new Date(props.post.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </Typography>
-                        <Typography variant="h4" component="div">
-                            Rating: {props.post.rating}
-                        </Typography>
-                        <Typography variant="h4" component="div">
-                            Views: {props.post.views}
-                        </Typography>
 
-                        <FacebookShareButton
-                            url={'http://localhost:3000/view/' + props.post._id}
-                            title={'Check this lift out!'}
-                            hashtag="#MPMD">
-                            <FacebookIcon size={32} round />
-                        </FacebookShareButton>
+                        <div style={gridContainerStyle}>
+                            <div>
+                                <video controls style={{ maxWidth: '80%', maxHeight: '80%' }}>
+                                    <source src={props.post.link} type="video/mp4" />
+                                </video>
+                            </div>
 
-                        <TwitterShareButton
-                            url={'http://localhost:3000/view/' + props.post._id}
-                            title={'Check this lift out!'}
-                            hashtag="#MPMD">
-                            <TwitterIcon size={32} round />
-                        </TwitterShareButton>
+                            <div>
 
-                        <RedditShareButton
-                            url={'http://localhost:3000/view/' + props.post._id}
-                            title={'Check this lift out!'}
-                            hashtag="#MPMD">
-                            <RedditIcon size={32} round />
-                        </RedditShareButton>
+                                <Typography variant="h5" component="div">
+                                    {props.post.description}
+                                </Typography>
+                                <hr/>
+
+                                <Typography variant="h5" component="div" style={{marginTop: '10%'}}>
+                                    {new Date(props.post.date).toLocaleString('en-US', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                    })}
+                                </Typography>
+                                <hr/>
+
+                                <Typography variant="h5" component="div" style={{marginTop: '10%'}}>
+                                    Rating: {props.post.rating}
+                                </Typography>
+                                <hr/>
+
+                                <Typography variant="h5" component="div" style={{marginTop: '10%'}}>
+                                    Views: {props.post.views}
+                                </Typography>
+                                <hr/>
+
+                                <span style={locationStyle}>
+                                  <p>
+                                       <FontAwesomeIcon  style={iconStyle} icon={faMapMarker} className="icon" />
+                                      {city}
+                                  </p>
+                                </span>
+
+                                <FacebookShareButton
+                                url={'http://localhost:3000/view/' + props.post._id}
+                                title={'Check this lift out!'}
+                                hashtag="#MPMD"
+                                style={{marginTop: '10%'}}>
+                                <FacebookIcon size={45} round />
+
+                                </FacebookShareButton>
+
+                                <TwitterShareButton
+                                    url={'http://localhost:3000/view/' + props.post._id}
+                                    title={'Check this lift out!'}
+                                    hashtag="#MPMD"
+                                    style={{marginLeft: '8px'}}>
+                                    <TwitterIcon size={45} round />
+                                </TwitterShareButton>
+
+                                <RedditShareButton
+                                    url={'http://localhost:3000/view/' + props.post._id}
+                                    title={'Check this lift out!'}
+                                    hashtag="#MPMD"
+                                    style={{marginLeft: '8px'}}>
+                                    <RedditIcon size={45} round />
+                                </RedditShareButton>
+                            </div>
+                        </div>
                     </CardContent>
                 </CardActionArea>
             </Card>

@@ -2,17 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Post from './Post';
 import {FormControl, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField} from "@mui/material";
 
-
-
 function Posts(){
     let offset = 0;
     const [posts, setPosts] = useState([])
     const [position, setPosition] = useState(null);
     const [filterOption, setFilterOption] = useState('sort_by_date');
     const [radius, setRadius] = useState(10); // Radius for "within radius" filter
-
-
-
 
     useEffect(() => {
         if ("geolocation" in navigator) {
