@@ -195,4 +195,19 @@ router.delete('/:id', postController.remove);
  */
 router.put('/rate/:id', requiresLogin, postController.rate);
 
+/**
+ * @swagger
+ * /posts/report/{id}:
+ *   put:
+ *     tags:
+ *       - Posts
+ *     description: Use to report by id
+ *     parameters:
+ *       - name: id
+ *         description: Post id
+ *         in: path
+ *         required: true
+ */
+router.put('/report/:id', requiresLogin, postController.report);
+
 module.exports = router;

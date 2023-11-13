@@ -30,7 +30,7 @@ function MyPost(props){
     };
 
     return (
-        <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <Container maxWidth="lg" style={{ textAlign: 'center', marginTop: '2rem' }}>
             <Card style={{ marginBottom: '16px' }}>
                 <CardContent style={gridContainerStyle}>
                     <Typography variant="h2">{props.post.name}</Typography>
@@ -52,7 +52,7 @@ function MyPost(props){
                             </video>
                         )}
                     </div>
-                    <div style={{ marginTop: '30%' }}>
+                    <div >
                         <Typography variant="h5" component="div">
                             {new Date(props.post.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </Typography>

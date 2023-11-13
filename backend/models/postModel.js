@@ -14,6 +14,7 @@ var postSchema = new Schema({
     'rating': Number,
     'reports': Number,
     'inappropriate' : Boolean,
+    'numberOfRatings': Number,
     'date': Date,
     'location': {
         type: {

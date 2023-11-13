@@ -47,14 +47,16 @@ module.exports = {
 
                         // Update the user's rating
                         user.rating = averageRating;
+                        updatedUsers.push(user);
                     }
 
-                    updatedUsers.push(user);
+
+
                 }
 
                 // updatedUsers = updatedUsers.concat(updatedUsers, updatedUsers);
                 // updatedUsers = updatedUsers.concat(updatedUsers, updatedUsers);
-
+                updatedUsers.sort((a, b) => b.rating - a.rating);
                 return res.json(updatedUsers);
             });
     },
@@ -184,7 +186,7 @@ module.exports = {
 
     profile: function(req, res,next){
         UserModel.findById(req.session.userId)
-            .exec(function(error, user){
+            .exec(async function(error, user){
                 if(error){
                     return next(error);
                 } else{
@@ -194,7 +196,40 @@ module.exports = {
                         return next(err);
                     } else{
                         //return res.render('user/profile', user);
-                        return res.json(user);
+                        var users = [user];
+                        var updatedUsers = [];
+
+                        // Loop through the users to calculate their updated ratings
+                        for (const user of users) {
+                            // Find all posts by the user
+                            const userPosts = await PostModel.find({ postedBy: user._id });
+
+                            if (userPosts.length > 0) {
+                                // Calculate the average rating of the user's posts
+                                const totalRating = userPosts.reduce((sum, post) => sum + post.rating, 0);
+                                const averageRating = totalRating / userPosts.length;
+
+                                // Update the user's rating
+                                user.rating = averageRating;
+                                updatedUsers.push(user);
+                            }
+                        }
+
+                        return res.json(updatedUsers[0]);
+                        /*const userPosts =  PostModel.find({ postedBy: user._id });
+
+                        if (userPosts.length > 0) {
+                            const totalRating = userPosts.reduce((sum, post) => sum + post.rating, 0);
+                            const averageRating = totalRating / userPosts.length;
+
+                            // Update the user's rating
+                            user.rating = averageRating;
+                            console.log(user)
+                            return res.json(user);
+                        }
+                        return res.json(user);*/
+
+
                     }
                 }
             });

@@ -49,7 +49,7 @@ function ViewPost() {
     const [comments, setComments] = useState([]);
     const [contents, setContents] = useState([]);
     const [error, setError] = useState([]);
-    const [rating, setRating] = useState(1);
+    const [rating, setRating] = useState(5);
 
 
     useEffect(function () {

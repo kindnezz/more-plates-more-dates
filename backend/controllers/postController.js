@@ -13,7 +13,7 @@ module.exports = {
 
     list: function (req, res) {
 
-        PostModel.find({'inappropriate': "false"})
+        PostModel.find({'inappropriate': "false", 'reports': { $lte: 10 }})
             .sort({date: 'desc'})
             .populate('postedBy')
             .exec(function (err, posts) {
@@ -42,7 +42,8 @@ module.exports = {
                     },
                 },
             },
-            inappropriate: false, // Add any additional filters you need
+            inappropriate: false,
+            reports: { $lte: 10 }
         })
             .sort({ distance: 1 })
             .limit(1)
@@ -77,8 +78,9 @@ module.exports = {
                     },
                     $maxDistance: dist * 1000
                 }
-            }
-        })
+            },
+                reports: { $lte: 10 }}
+            )
             .sort({ distance: 1 })
             .populate('postedBy')
             .exec(function (err, posts) {
@@ -116,7 +118,8 @@ module.exports = {
                      },
                  },
              },
-             inappropriate: false, // Add any additional filters you need
+             inappropriate: false,
+             reports: { $lte: 10 }
          })
              .sort({ distance: 1 })
              .skip(offsetValue)
@@ -170,7 +173,7 @@ module.exports = {
         var user_id = req.params.userId;
         console.log("user_id: " + user_id);
 
-        PostModel.find({ 'postedBy': user_id })
+        PostModel.find({ 'postedBy': user_id, 'reports': { $lte: 10 } })
             .sort({ date: 'desc' })
             .populate('postedBy')
             .exec(function (err, posts) {
@@ -189,7 +192,7 @@ module.exports = {
     show: function (req, res) {
         var id = req.params.id;
 
-        PostModel.findOne({_id: id})
+        PostModel.findOne({_id: id, 'reports': { $lte: 10 }})
             .populate('postedBy')
             .exec(async function (err, post) {
                 if (err) {
@@ -220,6 +223,7 @@ module.exports = {
             views: 0,
             rating: 5,
             reports: 0,
+            numberOfRatings: 0,
             inappropriate: false,
             date: new Date(),
             description: req.body.description,
@@ -304,7 +308,6 @@ module.exports = {
     rate: function (req, res) {
         var id = req.params.id;
         var rating = req.body.rating;
-        console.log(rating);
 
         UserModel.findOne({ _id: req.session.userId }, async function (err, user) {
             if (err) {
@@ -316,7 +319,6 @@ module.exports = {
 
             // Check if there's a liked item with the specified itemId
             const likedItem = user.liked.find((item) => item.id === id);
-            const likedItemIndex = user.liked.findIndex((item) => item.id === id);
 
             const post = await PostModel.findOne({ _id: id });
 
@@ -327,47 +329,31 @@ module.exports = {
                 });
             }
 
-            if (likedItem) {
-                console.log(`Rating for item with ID ${id}: ${likedItem.rating}`);
-                const originalRating = likedItem.rating;
+            if (!likedItem) {
+                console.log("post.rating", post.rating);
+                if(post.numberOfRatings === undefined)
+                    post.numberOfRatings = 0;
+                post.numberOfRatings += 1;
+                console.log("post.numberOfRatings", post.numberOfRatings);
+                post.rating = (parseInt(rating, 10) + parseInt(post.rating, 10) * post.numberOfRatings) / (post.numberOfRatings + 1);
 
-                console.log(post.rating, rating, originalRating);
-                post.rating = ((post.rating * user.liked.length) - originalRating + rating) / user.liked.length;
+                console.log("rating", rating);
+                console.log("final post.rating", post.rating);
 
-                post.save(async function (err, photo) {
-                    if (err) {
-                        return res.status(500).json({
-                            message: 'Error when updating photo.',
-                            error: err
-                        });
-                    }
 
-                    UserModel.findOneAndUpdate({ _id: req.session.userId }, { $pull: { liked: { id } } })
-                        .exec();
-                    UserModel.findOneAndUpdate({ _id: req.session.userId }, { $addToSet: { liked: { id, rating } } })
-                        .exec();
+                 post.save(async function (err, photo) {
+                     if (err) {
+                         return res.status(500).json({
+                             message: 'Error when updating Post.',
+                             error: err
+                         });
+                   }
 
-                    return res.json(photo);
-                });
-            } else {
-                console.log(`User with ID ${req.session.userId} has not liked an item with ID ${id}.`);
+                     UserModel.findOneAndUpdate({ _id: req.session.userId }, { $addToSet: { liked: { id, rating } } })
+                         .exec();
 
-                console.log(post.rating, rating, (post.rating * user.liked.length + rating) / (user.liked.length + 1));
-                post.rating = ((post.rating * user.liked.length) + rating) / (user.liked.length + 1);
-
-                post.save(function (err, photo) {
-                    if (err) {
-                        return res.status(500).json({
-                            message: 'Error when updating photo.',
-                            error: err
-                        });
-                    }
-
-                    UserModel.findOneAndUpdate({ _id: req.session.userId }, { $addToSet: { liked: { id, rating } } })
-                        .exec();
-
-                    return res.json(photo);
-                });
+                     return res.json(photo);
+                });/**/
             }
         });
     },
@@ -424,7 +410,7 @@ module.exports = {
                     } else {
                         photo.reports += 1;
 
-                        if (photo.reports >= 3) {
+                        if (photo.reports >= 10) {
                             photo.inappropriate = true;
                         }
 
