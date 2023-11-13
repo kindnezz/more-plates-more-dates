@@ -59,7 +59,7 @@ function Post(props){
 
     return (
         <div style={cardStyle}>
-            <Card onClick={() => navigate('/view/' + props.post._id)}>
+            <Card onClick={() => navigate('/view/' + props.post._id)} style={{width: "50%"}}>
                 <CardActionArea>
                     <CardContent>
                         <Typography variant="h2" component="div">
@@ -76,9 +76,10 @@ function Post(props){
                             <div>
 
                                 <Typography variant="h5" component="div">
-                                    {props.post.description}
+                                    {props.post.description.split(' ').slice(0, 25).join(' ')}{props.post.description.split(' ').length > 15 ? ' ...' : ''}
                                 </Typography>
-                                <hr/>
+                                <hr />
+
 
                                 <Typography variant="h5" component="div" style={{marginTop: '10%'}}>
                                     {new Date(props.post.date).toLocaleString('en-US', {
@@ -108,30 +109,6 @@ function Post(props){
                                   </p>
                                 </span>
 
-                                <FacebookShareButton
-                                url={'http://localhost:3000/view/' + props.post._id}
-                                title={'Check this lift out!'}
-                                hashtag="#MPMD"
-                                style={{marginTop: '10%'}}>
-                                <FacebookIcon size={45} round />
-
-                                </FacebookShareButton>
-
-                                <TwitterShareButton
-                                    url={'http://localhost:3000/view/' + props.post._id}
-                                    title={'Check this lift out!'}
-                                    hashtag="#MPMD"
-                                    style={{marginLeft: '8px'}}>
-                                    <TwitterIcon size={45} round />
-                                </TwitterShareButton>
-
-                                <RedditShareButton
-                                    url={'http://localhost:3000/view/' + props.post._id}
-                                    title={'Check this lift out!'}
-                                    hashtag="#MPMD"
-                                    style={{marginLeft: '8px'}}>
-                                    <RedditIcon size={45} round />
-                                </RedditShareButton>
                             </div>
                         </div>
                     </CardContent>

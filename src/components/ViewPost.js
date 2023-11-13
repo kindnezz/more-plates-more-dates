@@ -5,6 +5,14 @@ import Comment from "./Comment";
 import {Button, Card, CardContent, Container, Grid, List, ListItem, MenuItem, Select, TextField, Typography} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import {grey} from "@mui/material/colors";
+import {
+    FacebookIcon,
+    FacebookShareButton,
+    RedditIcon,
+    RedditShareButton,
+    TwitterIcon,
+    TwitterShareButton
+} from "react-share";
 
 const CustomButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText(grey[900]),
@@ -114,7 +122,7 @@ function ViewPost() {
     }
 
     return (
-        <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '2rem' }}>
+        <Container maxWidth="xl" style={{ textAlign: 'center', marginTop: '2rem' }}>
             <Card style={{ marginBottom: '16px' }}>
                 <CardContent style={gridContainerStyle}>
                     <Typography variant="h2">{post.name}</Typography>
@@ -133,7 +141,7 @@ function ViewPost() {
                         </video>}
                     </div>
 
-                    <div style={{marginTop: '30%'}}>
+                    <div>
                         <Typography variant="h5" component="div">
                             {new Date(post.date).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </Typography>
@@ -143,8 +151,35 @@ function ViewPost() {
                         <Typography variant="h5">Views: {post.views}</Typography>
                         <hr/>
                         <Typography variant="h5">Rating: {post.rating}</Typography>
+
+                        <FacebookShareButton
+                            url={'http://localhost:3000/view/' + post._id}
+                            title={'Check this lift out!'}
+                            hashtag="#MPMD"
+                            style={{marginTop: '10%'}}>
+                            <FacebookIcon size={45} round />
+
+                        </FacebookShareButton>
+
+                        <TwitterShareButton
+                            url={'http://localhost:3000/view/' + post._id}
+                            title={'Check this lift out!'}
+                            hashtag="#MPMD"
+                            style={{marginLeft: '8px'}}>
+                            <TwitterIcon size={45} round />
+                        </TwitterShareButton>
+
+                        <RedditShareButton
+                            url={'http://localhost:3000/view/' + post._id}
+                            title={'Check this lift out!'}
+                            hashtag="#MPMD"
+                            style={{marginLeft: '8px'}}>
+                            <RedditIcon size={45} round />
+                        </RedditShareButton>
                     </div>
+
                 </CardContent>
+
             </Card>
 
             <div style={{ textAlign: 'center' }}>

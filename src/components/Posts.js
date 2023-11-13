@@ -70,7 +70,7 @@ function Posts(){
     // Fetch and update posts based on the selected filter option
     useEffect(function(){
         const getPosts = async function(){
-            const res = await fetch(`http://localhost:3001/posts/1/${offset}`);
+            const res = await fetch(`http://localhost:3001/posts/2/${offset}`);
             const data = await res.json();
             setPosts(data)
         }

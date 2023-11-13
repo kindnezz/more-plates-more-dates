@@ -306,9 +306,7 @@ module.exports = {
         var rating = req.body.rating;
         console.log(rating);
 
-
-
-        UserModel.findOne({_id: req.session.userId}, async function (err, user) {
+        UserModel.findOne({ _id: req.session.userId }, async function (err, user) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting user.',
@@ -320,19 +318,21 @@ module.exports = {
             const likedItem = user.liked.find((item) => item.id === id);
             const likedItemIndex = user.liked.findIndex((item) => item.id === id);
 
-            const post = await PostModel.findOne({_id: id});
+            const post = await PostModel.findOne({ _id: id });
 
             if (!post) {
                 console.log(`Post with ID ${id} not found.`);
-                return;
+                return res.status(404).json({
+                    message: `Post with ID ${id} not found.`
+                });
             }
 
             if (likedItem) {
                 console.log(`Rating for item with ID ${id}: ${likedItem.rating}`);
-                const originalRating = 2 * post.rating - likedItem.rating;
+                const originalRating = likedItem.rating;
 
-                console.log(post.rating, rating, originalRating)
-                post.rating = (originalRating + rating) / 2;
+                console.log(post.rating, rating, originalRating);
+                post.rating = ((post.rating * user.liked.length) - originalRating + rating) / user.liked.length;
 
                 post.save(async function (err, photo) {
                     if (err) {
@@ -342,20 +342,18 @@ module.exports = {
                         });
                     }
 
-                    UserModel.findOneAndUpdate({_id: req.session.userId}, {$pull: {liked: {id}}})
+                    UserModel.findOneAndUpdate({ _id: req.session.userId }, { $pull: { liked: { id } } })
                         .exec();
-                    UserModel.findOneAndUpdate({_id: req.session.userId}, {$addToSet: {liked: {id, rating}}})
+                    UserModel.findOneAndUpdate({ _id: req.session.userId }, { $addToSet: { liked: { id, rating } } })
                         .exec();
 
                     return res.json(photo);
                 });
-
             } else {
-                console.log(`User with ID ${id} has not liked an item with ID ${id}.`);
+                console.log(`User with ID ${req.session.userId} has not liked an item with ID ${id}.`);
 
-                console.log(post.rating, rating, post.rating + rating)
-                post.rating = (post.rating + rating) / 2;
-
+                console.log(post.rating, rating, (post.rating * user.liked.length + rating) / (user.liked.length + 1));
+                post.rating = ((post.rating * user.liked.length) + rating) / (user.liked.length + 1);
 
                 post.save(function (err, photo) {
                     if (err) {
@@ -365,7 +363,7 @@ module.exports = {
                         });
                     }
 
-                    UserModel.findOneAndUpdate({_id: req.session.userId}, {$addToSet: {liked: {id, rating}}})
+                    UserModel.findOneAndUpdate({ _id: req.session.userId }, { $addToSet: { liked: { id, rating } } })
                         .exec();
 
                     return res.json(photo);
