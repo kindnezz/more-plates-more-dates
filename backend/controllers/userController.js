@@ -21,6 +21,107 @@ module.exports = {
         });
     },
 
+    listWithDetails: function (req, res) {
+        UserModel.find()
+            .exec(async function (err, users) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when getting users.',
+                        error: err
+                    });
+                }
+
+                // Create an array to store processed users
+                var usersWithDetails = [];
+
+                // Loop through the users to calculate their details
+                for (const user of users) {
+                    // Find all posts by the user
+                    const userPosts = await PostModel.find({ postedBy: user._id });
+
+                    // Calculate the number of posts by the user
+                    const numberOfPosts = userPosts.length;
+
+                    // Calculate the average rating of the user's posts
+                    const totalRating = userPosts.reduce((sum, post) => sum + post.rating, 0);
+                    const averageRating = numberOfPosts > 0 ? totalRating / numberOfPosts : 0;
+
+                    // Add the details to the user
+                    const userWithDetails = {
+                        _id: user._id,
+                        username: user.username,
+                        email: user.email,
+                        liked: user.liked,
+                        reported: user.reported,
+                        posts: numberOfPosts,
+                        rating: averageRating,
+                        reports: user.reports,
+                        verified: user.verified,
+                        banned: user.banned
+                    };
+
+                    usersWithDetails.push(userWithDetails);
+                }
+
+                // Sort the users based on the rating
+                usersWithDetails.sort((a, b) => b.rating - a.rating);
+
+                return res.json(usersWithDetails);
+            });
+    },
+
+    verifyUser: function (req, res) {
+        var userId = req.params.id;
+
+        UserModel.findByIdAndUpdate(
+            userId,
+            { $set: { verified: true } },
+            { new: true },
+            function (err, updatedUser) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when updating user.',
+                        error: err
+                    });
+                }
+
+                if (!updatedUser) {
+                    return res.status(404).json({
+                        message: 'User not found.'
+                    });
+                }
+
+                return res.json(updatedUser);
+            }
+        );
+    },
+
+    banUser: function (req, res) {
+        var userId = req.params.id;
+
+        UserModel.findByIdAndUpdate(
+            userId,
+            { $set: { banned: true } },
+            { new: true },
+            function (err, updatedUser) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when updating user.',
+                        error: err
+                    });
+                }
+
+                if (!updatedUser) {
+                    return res.status(404).json({
+                        message: 'User not found.'
+                    });
+                }
+
+                return res.json(updatedUser);
+            }
+        );
+    },
+
     listByRating: function (req, res) {
         UserModel.find()
             .sort({ rating: -1 })

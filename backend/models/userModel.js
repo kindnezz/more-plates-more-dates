@@ -10,7 +10,9 @@ var userSchema = new Schema({
     'reported' : Array,
     'posts' : Number,
     'rating' : Number,
-    'reports' : Number
+    'reports' : Number,
+    'verified' : Boolean,
+    'banned' : Boolean,
 });
 
 userSchema.pre('save', function(next){

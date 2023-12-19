@@ -12,6 +12,11 @@ var userController = require('../controllers/userController.js');
  */
 router.get('/', userController.list);
 
+router.get('/details', userController.listWithDetails);
+
+router.get('/verify/:id', userController.verifyUser);
+router.get('/ban/:id', userController.banUser);
+
 /**
  * @swagger
  * /users/leaderboard:

@@ -95,7 +95,7 @@ module.exports = {
                 return res.json(posts);
             });
     },
-     listByLocation: function (req, res) {
+    listByLocation: function (req, res) {
         console.log(req.params)
          var latitude = req.params.p1;
          var longitude = req.params.p2;
