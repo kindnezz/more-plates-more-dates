@@ -23,9 +23,9 @@ module.exports = {
     listPhoto: function (req, res) {
         var photoId = req.params.id;
 
-        CommentModel.find()
+        CommentModel.find({ postedOn: photoId })
             .populate('postedBy')
-            .exec({postedOn: photoId}, function (err, comments) {
+            .exec(function (err, comments) {
                 if (err) {
                     return res.status(500).json({
                         message: 'Error when getting comment.',
