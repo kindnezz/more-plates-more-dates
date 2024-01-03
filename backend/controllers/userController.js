@@ -274,6 +274,25 @@ module.exports = {
         });
     },
 
+    loginAsAdmin(req, res, next) {
+        UserModel.authenticate(req.body.username, req.body.password, function(err, user) {
+            if (err || !user) {
+                var err = new Error('Wrong username or password');
+                err.status = 401;
+                return next(err);
+            }
+
+            if (!user.isAdmin) {
+                var err = new Error('User is not an admin');
+                err.status = 403;
+                return next(err);
+            }
+
+            req.session.userId = user._id;
+            return res.json(user);
+        });
+    },
+
     profile: function(req, res,next){
         UserModel.findById(req.session.userId)
             .exec(async function(error, user){

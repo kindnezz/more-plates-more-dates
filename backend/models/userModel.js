@@ -13,6 +13,7 @@ var userSchema = new Schema({
     'reports' : Number,
     'verified' : Boolean,
     'banned' : Boolean,
+    'isAdmin' : Boolean
 });
 
 userSchema.pre('save', function(next){

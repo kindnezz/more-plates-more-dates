@@ -85,6 +85,8 @@ router.post('/', userController.create);
  */
 router.post('/login', userController.login);
 
+router.post('/loginAdmin', userController.loginAsAdmin);
+
 /**
  * @swagger
  * /users/{id}:
