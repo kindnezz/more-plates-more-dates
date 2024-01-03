@@ -150,13 +150,8 @@ module.exports = {
                         user.rating = averageRating;
                         updatedUsers.push(user);
                     }
-
-
-
                 }
 
-                // updatedUsers = updatedUsers.concat(updatedUsers, updatedUsers);
-                // updatedUsers = updatedUsers.concat(updatedUsers, updatedUsers);
                 updatedUsers.sort((a, b) => b.rating - a.rating);
                 return res.json(updatedUsers);
             });
@@ -191,7 +186,6 @@ module.exports = {
             posts : 0,
             likes : 0,
             reports : 0
-            // liked : []
         });
 
         user.save(function (err, user) {
@@ -203,7 +197,6 @@ module.exports = {
             }
 
             return res.status(201).json(user);
-            //return res.redirect('/users/login');
         });
     },
 
@@ -246,9 +239,6 @@ module.exports = {
         });
     },
 
-    /**
-     * userController.remove()
-     */
     remove: function (req, res) {
         var id = req.params.id;
 
@@ -280,7 +270,6 @@ module.exports = {
                 return next(err);
             }
             req.session.userId = user._id;
-            //res.redirect('/users/profile');
             return res.json(user);
         });
     },
@@ -296,7 +285,6 @@ module.exports = {
                         err.status = 400;
                         return next(err);
                     } else{
-                        //return res.render('user/profile', user);
                         var users = [user];
                         var updatedUsers = [];
 
@@ -317,20 +305,6 @@ module.exports = {
                         }
 
                         return res.json(updatedUsers[0]);
-                        /*const userPosts =  PostModel.find({ postedBy: user._id });
-
-                        if (userPosts.length > 0) {
-                            const totalRating = userPosts.reduce((sum, post) => sum + post.rating, 0);
-                            const averageRating = totalRating / userPosts.length;
-
-                            // Update the user's rating
-                            user.rating = averageRating;
-                            console.log(user)
-                            return res.json(user);
-                        }
-                        return res.json(user);*/
-
-
                     }
                 }
             });
@@ -342,7 +316,6 @@ module.exports = {
                 if(err){
                     return next(err);
                 } else{
-                    //return res.redirect('/');
                     return res.status(201).json({});
                 }
             });

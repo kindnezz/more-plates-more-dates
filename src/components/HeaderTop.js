@@ -42,7 +42,6 @@ function HeaderTop(props) {
         setOpen(false);
     };
 
-
     return (
         <AppBar position="fixed" style={{ backgroundColor: 'gray' }}>
             <Toolbar style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

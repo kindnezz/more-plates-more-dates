@@ -1,8 +1,5 @@
 var PostModel = require('../models/postModel.js');
 const UserModel = require("../models/userModel");
-const decay = require("decay");
-var mongoose = require('mongoose');
-const {query} = require("express");
 
 /**
  * postController.js
@@ -12,7 +9,6 @@ const {query} = require("express");
 module.exports = {
 
     list: function (req, res) {
-
         PostModel.find({'inappropriate': "false", 'reports': { $lte: 10 }})
             .sort({date: 'desc'})
             .populate('postedBy')
@@ -61,13 +57,13 @@ module.exports = {
                 return res.json(posts);
             });
     },
+
     withinRadius: function (req, res) {
         var dist = req.params.dist;
         var latitude = req.params.p1;
         var longitude = req.params.p2;
 
         console.log(req.params)
-
 
         PostModel.find({
             location: {
@@ -95,13 +91,13 @@ module.exports = {
                 return res.json(posts);
             });
     },
+
     listByLocation: function (req, res) {
         console.log(req.params)
          var latitude = req.params.p1;
          var longitude = req.params.p2;
          const  limitValue = 1;
          const  offset = req.params.offset;
-
 
          const offsetValue = parseInt(offset, 10);
 
@@ -166,9 +162,6 @@ module.exports = {
         }
     },
 
-
-
-
     listByUser: function (req, res) {
         var user_id = req.params.userId;
         console.log("user_id: " + user_id);
@@ -230,12 +223,11 @@ module.exports = {
             tags: req.body.tags,
             location: {
                 type: 'Point',
-                coordinates: [req.body.longitude, req.body.latitude] // Replace with actual coordinates
+                coordinates: [req.body.longitude, req.body.latitude]
             }
         });
 
-        UserModel.findOneAndUpdate({_id: req.session.userId}, {$inc: {'posts': 1}})
-            .exec();
+        UserModel.findOneAndUpdate({_id: req.session.userId}, {$inc: {'posts': 1}}).exec();
 
         post.save(function (err, post) {
             if (err) {
@@ -349,11 +341,10 @@ module.exports = {
                          });
                    }
 
-                     UserModel.findOneAndUpdate({ _id: req.session.userId }, { $addToSet: { liked: { id, rating } } })
-                         .exec();
+                     UserModel.findOneAndUpdate({ _id: req.session.userId }, { $addToSet: { liked: { id, rating } } }).exec();
 
                      return res.json(photo);
-                });/**/
+                });
             }
         });
     },
@@ -414,11 +405,8 @@ module.exports = {
                             photo.inappropriate = true;
                         }
 
-                        UserModel.findOneAndUpdate({_id: req.session.userId}, {$addToSet: {reported: id}})
-                            .exec();
-
-                        UserModel.findOneAndUpdate({_id: photo.postedBy}, {$inc: {'reports': 1}})
-                            .exec();
+                        UserModel.findOneAndUpdate({_id: req.session.userId}, {$addToSet: {reported: id}}).exec();
+                        UserModel.findOneAndUpdate({_id: photo.postedBy}, {$inc: {'reports': 1}}).exec();
 
                         photo.save(function (err, photo) {
                             if (err) {

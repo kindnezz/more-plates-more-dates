@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Post from './Post';
-import {FormControl, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Select, TextField} from "@mui/material";
+import {FormControl, Grid, MenuItem, Select, TextField} from "@mui/material";
 
 function Posts(){
     let offset = 0;
@@ -18,6 +18,7 @@ function Posts(){
                     console.log(position.coords)
                 },
                 (error) => {
+                    console.log(error)
                 }
             );
         } else {
@@ -37,7 +38,7 @@ function Posts(){
             }
             getPosts();
         }
-        else if (filterOption === 'sort_by_date') {/**/
+        else if (filterOption === 'sort_by_date') {
             offset += 1;
             const getPosts = async function(){
                 const res = await fetch(`http://localhost:3001/posts/1/${offset}`);
@@ -65,8 +66,6 @@ function Posts(){
         };
     }, [filterOption]);
 
-
-
     // Fetch and update posts based on the selected filter option
     useEffect(function(){
         const getPosts = async function(){
@@ -78,10 +77,6 @@ function Posts(){
 
     }, []);
 
-    // Helper function to calculate distance between two coordinates {(e) => setFilterOption(e.target.value)}
-
-    //{(e) => setFilterOption(e.target.value)}
-
     const handleRadiusChange = (event) => {
         setRadius(event.target.value);
         const getPosts = async function(){
@@ -92,11 +87,11 @@ function Posts(){
         }
         getPosts();
     }
+
     const handleFilterChange = (event) => {
         console.log(event.target.value)
         const selectedOption = event.target.value;
         setFilterOption(selectedOption);
-
 
         if (selectedOption === 'nearest') {
             const getPosts = async function(){

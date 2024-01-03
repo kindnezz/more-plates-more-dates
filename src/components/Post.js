@@ -3,15 +3,6 @@ import {Card, CardActionArea, CardContent, Typography} from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarker } from '@fortawesome/free-solid-svg-icons'
 import React, {useState} from "react";
-import {
-    FacebookIcon,
-    FacebookShareButton,
-    RedditIcon,
-    RedditShareButton,
-    TwitterIcon,
-    TwitterShareButton
-} from "react-share";
-
 
 const cardStyle = {
     height: '100%',

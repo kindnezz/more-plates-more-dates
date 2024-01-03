@@ -28,7 +28,9 @@ var postSchema = new Schema({
         }
     }
 });
+
 postSchema.index({ location: '2dsphere' });
+
 postSchema.pre('save', function (next) {
     var photo = this;
     var tags = photo.tags[0].split(' ')

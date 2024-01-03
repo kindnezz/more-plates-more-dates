@@ -2,7 +2,7 @@ import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {UserContext} from "../userContext";
 import Comment from "./Comment";
-import {Button, Card, CardContent, Container, Grid, List, ListItem, MenuItem, Select, TextField, Typography} from "@mui/material";
+import {Button, Card, CardContent, Container, List, ListItem, TextField, Typography} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import {grey} from "@mui/material/colors";
 import {

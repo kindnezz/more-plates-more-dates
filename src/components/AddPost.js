@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react'
 import { Navigate } from 'react-router';
 import { UserContext } from '../userContext';
-import {Button, Container, TextareaAutosize, TextField} from "@mui/material";
+import {Button, Container, TextField} from "@mui/material";
 import axios from "axios";
 import {ThreeDots} from "react-loader-spinner";
 import UploadFileIcon from '@mui/icons-material/UploadFile';

@@ -1,15 +1,6 @@
 import {Button, Card, CardContent, Typography, Container} from "@mui/material";
 import React from "react";
 
-const cardStyle = {
-    alignItems: 'center',
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '20px',
-    padding: '10px',
-    justifyContent: 'center'
-};
-
 const gridContainerStyle = {
     display: 'grid',
     gridTemplateColumns: '50% 50%',
